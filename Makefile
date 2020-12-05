@@ -13,6 +13,7 @@ $(REPORT): folder report_makefile download
 	cat reports/$(TODAY)/*.tags | sort > reports/$(TODAY)/report.csv
 	-cat report.csv reports/$(TODAY)/report.csv |sort -k1,1 -k2,2 -k3,3n | sort -u -k1,1 -k2,2 > newreport.csv
 	mv newreport.csv report.csv
+	cat report.csv | awk '{print $$1"!"$$2"="$$3}' | jo -d! -p > report.json
 
 
 folder:
@@ -26,7 +27,7 @@ report_makefile:: repositories.csv
 	awk -f createmake.awk -v TODAY=$(TODAY) repositories.csv > report_makefile
 
 clean:
-	rm -f report_makefile report.csv newreport.csv
+	rm -f report_makefile report.csv newreport.csv report.json
 	touch report.csv
 	rm -rf reports
 
