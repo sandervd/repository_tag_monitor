@@ -24,7 +24,9 @@ folder:
 
 report_makefile:: repositories.csv
 	# Rebuild a makefile based on the repository list.
-	awk -f createmake.awk -v TODAY=$(TODAY) repositories.csv > report_makefile
+	# The sort is a premature optimization, which helps when ssh is configured with ControlMaster auto
+	# and make is executed with the -j option (theoretical).
+	cat repositories.csv | sort | awk -f createmake.awk -v TODAY=$(TODAY) > report_makefile
 
 clean:
 	rm -f report_makefile report.csv newreport.csv report.json
